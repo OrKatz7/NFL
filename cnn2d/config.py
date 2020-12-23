@@ -10,6 +10,7 @@ class data_config:
     train_dir = settings['train']
     train_csv_path = settings['train_csv_path']
     jpeg_dir = settings['jpeg_dir']
+    img_size_crop = 256
  
 class efficientnetb3:
     model_name="efficientnet-b3"
