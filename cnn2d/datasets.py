@@ -184,6 +184,8 @@ class DatasetRetriever2D(Dataset):
             
             if self.transforms:
                 img = self.transforms(image=img)['image']
+            else:
+                img = to_tensor(img)
                 
             if self.add_channel:
                 return img
