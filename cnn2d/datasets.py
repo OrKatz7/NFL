@@ -68,7 +68,7 @@ class Dataset2D(Dataset):
 
     def __getitem__(self, idx):
 
-        return img,label #img CxHxW, label 1
+        return im_id,frame,img,label #img CxHxW, label 1
 
     def __len__(self):
         return len(self.df)
