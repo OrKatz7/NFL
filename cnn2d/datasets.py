@@ -149,7 +149,7 @@ class DatasetRetriever2D(Dataset):
         return sequence
         
     def __len__(self) -> int:
-        return self.df
+        return len(self.df)
 
     def load_image(self, row):
             img = cv2.imread(self.get_path(row))
