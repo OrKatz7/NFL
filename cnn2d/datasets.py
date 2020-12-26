@@ -2,7 +2,6 @@ import os
 import numpy as np
 import pandas as pd
 import torch
-
 from tqdm import tqdm
 import time
 import random
@@ -16,12 +15,19 @@ from sklearn.model_selection import StratifiedKFold
 from torch.utils.data import Dataset,DataLoader
 from torch.utils.data.sampler import SequentialSampler, RandomSampler
 from glob import glob
+import albumentations as albu
+
+def to_tensor3d(x, **kwargs):
+    """
+    Convert image or mask.
+    """
+    return torch.tensor(x.transpose(0, 3, 1, 2).astype('float32'))
 
 def to_tensor(x, **kwargs):
     """
     Convert image or mask.
     """
-    return torch.tensor(x.transpose(0, 3, 1, 2).astype('float32'))
+    return torch.tensor(x.transpose(2,0,1).astype('float32'))
 
 class DatasetRetriever3D(Dataset):
     """
@@ -30,7 +36,7 @@ class DatasetRetriever3D(Dataset):
     def __init__(self, 
                  df = None,
                  seq_len = 50,
-                 crop_size = 128,
+                 crop_size = 256,
                  image_size = 150,
                  transforms = None,
                  image_root='train_images',
@@ -52,9 +58,9 @@ class DatasetRetriever3D(Dataset):
         
         paths = self.df[self.df.seq_index_1==index]
         if random.choice([True, False]):
-            sequence = to_tensor(np.stack([self.load_image(paths.iloc[i]) for i in range(len(paths))]))
+            sequence = to_tensor3d(np.stack([self.load_image(paths.iloc[i]) for i in range(len(paths))]))
         else:
-            sequence = to_tensor(np.stack([np.flip(self.load_image(paths.iloc[i]),1) for i in range(len(paths))]))
+            sequence = to_tensor3d(np.stack([np.flip(self.load_image(paths.iloc[i]),1) for i in range(len(paths))]))
         
         s = sequence.shape
         if s[0]<self.seq_len:
@@ -115,8 +121,11 @@ class DatasetRetriever3D(Dataset):
     def get_path(self, row):
         return row.image_path
     
-    
-    
+def get_training_augmentation(y=224,x=224):
+    train_transform = [
+                       albu.HorizontalFlip(p=0.5)]
+    return albu.Compose(train_transform)
+
 class DatasetRetriever2D(Dataset):
     """
     2D Dataset Retriever for NFL 2020 
@@ -142,11 +151,11 @@ class DatasetRetriever2D(Dataset):
 
     def __getitem__(self, index: int):
         row = self.df.iloc[index]
-        img = self.load_image(row.iloc[i])
+        img = self.load_image(row)
         if not self.test:
-            label = torch.tensor(row.impact.to_numpy().reshape(-1,1))
-            return sequence, label
-        return sequence
+            label = torch.tensor(np.array(int(row.impact)))
+            return img, label
+        return img
         
     def __len__(self) -> int:
         return len(self.df)
@@ -164,8 +173,8 @@ class DatasetRetriever2D(Dataset):
             v_center = min(s[0]-self.image_size//2,v_center)
             
             # Random Cropping
-            left = h_center - random.randint(self.crop_size//2,self.image_size//2)
-            top = v_center - random.randint(self.crop_size//2,self.image_size//2)
+            left = h_center - self.crop_size//2# - random.randint(self.crop_size//2,self.image_size//2)
+            top = v_center - self.crop_size//2# - random.randint(self.crop_size//2,self.image_size//2)
             right = left + self.crop_size
             bottom = top + self.crop_size
             
@@ -181,16 +190,17 @@ class DatasetRetriever2D(Dataset):
             assert img.shape[2]==4
                
             img /= 255.0
-            
             if self.transforms:
-                img = self.transforms(image=img)['image']
+                img = self.transforms(image=img[:,:,:3])['image']
+                img = to_tensor(img)
             else:
                 img = to_tensor(img)
-                
             if self.add_channel:
                 return img
             
-            return img[:,:,:3]
+            return img
             
     def get_path(self, row):
-        return row.image_path
+        img_path = row['video'].replace('.mp4', '') + '_' + row['frame'].astype(str) + '.png'
+        return f"{self.image_root}/{img_path}"
+    
