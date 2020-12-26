@@ -7,14 +7,13 @@ with open('../settings.json') as json_file:
     settings = json.load(json_file) 
 
 class data_config:
-    train_dir = settings['train']
+    train_dir = "../../"+settings['image_root']
     train_csv_path = settings['train_csv_path']
-    jpeg_dir = settings['jpeg_dir']
     img_size_crop = 256
  
-class efficientnetb3:
-    model_name="efficientnet-b3"
-    batch_size = 30*3
+class efficientnetb5:
+    model_name="efficientnet-b5"
+    batch_size = 30*3*3
     WORKERS = 30
     classes =1
     resume = True
@@ -25,6 +24,7 @@ class efficientnetb3:
     scheduler = "torch.optim.lr_scheduler.CosineAnnealingLR"
     scheduler_parm = {'T_max':1000, 'eta_min':1e-6}
     loss_fn = 'torch.nn.BCEWithLogitsLoss'
-    MODEL_PATH = "../"+settings['MODEL_PATH2D']
+#     MODEL_PATH = "../"+settings['MODEL_PATH2D']
+    MODEL_PATH = "log/"
     if not os.path.exists(MODEL_PATH):
         os.makedirs(MODEL_PATH)
