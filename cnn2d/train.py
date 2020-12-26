@@ -32,41 +32,53 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.manual_seed(seed)
 
-
 if __name__ == "__main__":
-
-    my_parser = argparse.ArgumentParser(description='RSNA - Pulmonary Embolism Detection: trian cnn')
+    my_parser = argparse.ArgumentParser(description='NFL trian cnn')
     my_parser.add_argument('--config',type=str)
-    my_parser.add_argument('--fold',type=int)
-    my_parser.add_argument('--folds',type=int)
+    my_parser.add_argument('--fold',type=str)
     args = my_parser.parse_args()
-    set_seed(1234)
-    model_config = eval(args.config)
-    os.environ["CUDA_VISIBLE_DEVICES"]=model_config.gpu
-    orig_stdout = sys.stdout
-    f = open(f'log/{model_config.model_name}_fold{args.fold}.txt', 'w')
-    sys.stdout = f
-    t_df,v_df = split_train_val(data_config,fold=args.fold,FOLD_NUM=args.folds)
-    preprocessing_fn = functools.partial(preprocess_input, **formatted_settings)
-    print(get_training_augmentation())
-    train_dataset = CTDataset2D(t_df,data_config.jpeg_dir,
-                                transforms=get_training_augmentation(),
-                                preprocessing=get_preprocessing(preprocessing_fn))#,mode='train')
-    
-    val_dataset = CTDataset2D(v_df,data_config.jpeg_dir,
-                                transforms=get_validation_augmentation(),
-                                preprocessing=get_preprocessing(preprocessing_fn))
-    train = DataLoader(train_dataset, batch_size=model_config.batch_size, shuffle=True, num_workers=model_config.WORKERS, pin_memory=True)
-    val = DataLoader(val_dataset, batch_size=model_config.batch_size*1, shuffle=False, num_workers=model_config.WORKERS, pin_memory=True)
-    model = EfficientNet.from_pretrained(model_config.model_name,num_classes=model_config.classes).cuda()
+    if True:
+        set_seed(1234)
+        model_config = eval(args.config)
+        os.environ["CUDA_VISIBLE_DEVICES"]=model_config.gpu
+        orig_stdout = sys.stdout
+        f = open(f'log/{model_config.model_name}_fold{args.fold}.txt', 'w')
+        sys.stdout = f
+        t_df,v_df = split_train_val(data_config,fold=args.fold,FOLD_NUM=args.folds)
+        df = pd.read_csv("../"+data_config.train_csv_path)
+        t_df = df[df.fold!=args.fold]
+        df1 = t_df[t_df.impact>0]
+        df0 = t_df[t_df.impact<1]
+        df0 = df0[df0.frame<100]
+        df0 = df0[df0.frame>20]
+        t_df = pd.concat([df1,df0.sample(frac=0.5)])
+        t_df = t_df[(t_df.frame<100)&(t_df.frame>20)]
+        v_df = df[df.fold==args.fold]
+        v_df = v_df[v_df.frame<100]
+        v_df = v_df[v_df.frame>20]
+        train_dataset = DatasetRetriever2D(df=df,image_root=data_config.train_dir,
+                                           add_channel=False,image_size=data_config.img_size_crop,
+                                      transforms =get_training_augmentation() )#,mode='train')
 
-    optimizer = eval(model_config.optimizer)(model.parameters(),**model_config.optimizer_parm)
-    scheduler = eval(model_config.scheduler)(optimizer,**model_config.scheduler_parm)
-    loss_fn = eval(model_config.loss_fn)()
-    
-    model = torch.nn.DataParallel(model)
-    model_config.model_name = model_config.model_name + f"_cnn_{args.fold}"
-    Trainer = trainer(loss_fn,model,optimizer,scheduler,config=model_config)
-    Trainer.run(train,val)
-    sys.stdout = orig_stdout
-    f.close()
+        val_dataset = DatasetRetriever2D(df=df,image_root=data_config.train_dir,
+                                           add_channel=False,image_size=data_config.img_size_crop,
+                                      transforms =get_training_augmentation() )#,mode='train')
+
+        val_dataset = DatasetRetriever2D(df=v_df,image_root=data_config.jpeg_dir,
+                                    transforms=get_validation_augmentation(),
+                                    add_channel=False)
+        train = DataLoader(train_dataset, batch_size=model_config.batch_size, shuffle=True, num_workers=model_config.WORKERS, pin_memory=True)
+        val = DataLoader(val_dataset, batch_size=model_config.batch_size*1, shuffle=False, num_workers=model_config.WORKERS, pin_memory=True)
+        model = EfficientNet.from_pretrained("efficientnet-b5",num_classes=model_config.classes).cuda()
+
+        optimizer = eval(model_config.optimizer)(model.parameters(),**model_config.optimizer_parm)
+        scheduler = eval(model_config.scheduler)(optimizer,**model_config.scheduler_parm)
+        loss_fn = eval(model_config.loss_fn)()
+
+        model = torch.nn.DataParallel(model)
+        model_config.model_name = "efficientnet-b5" + f"_cnn_{args.fold}"
+        Trainer = trainer(loss_fn,model,optimizer,scheduler,config=model_config)
+        Trainer.run(train,val)
+        sys.stdout = orig_stdout
+        f.close()
+
