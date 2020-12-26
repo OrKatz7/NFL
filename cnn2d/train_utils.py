@@ -1,9 +1,7 @@
-
 import torch
 import numpy as np
 from tqdm.auto import tqdm
 import os
-from apex import amp
 class trainer:
     def __init__(self,loss_fn,model,optimizer,scheduler,config):
         self.loss_fn = loss_fn
@@ -16,7 +14,7 @@ class trainer:
     def batch_train(self, batch_imgs, batch_labels, batch_idx):
         batch_imgs, batch_labels = batch_imgs.cuda().float(), batch_labels.cuda().float()
         predicted = self.model(batch_imgs)
-        loss = self.loss_fn(predicted.float(), batch_labels)
+        loss = self.loss_fn(predicted.float().reshape(-1), batch_labels.reshape(-1))
         loss.backward()
         self.optimizer.step()
         self.optimizer.zero_grad()
@@ -49,7 +47,7 @@ class trainer:
                 batch_imgs = imgs.cuda().float()
                 batch_labels = labels.cuda()
                 predicted = self.model(batch_imgs)
-                loss = self.loss_fn(predicted.float(),batch_labels.float()).item()
+                loss = self.loss_fn(predicted.float().reshape(-1),batch_labels.float().reshape(-1)).item()
                 current_loss_mean = (current_loss_mean * batch_idx + loss) / (batch_idx + 1)
                 tqdm_loader.set_description(f"loss - {current_loss_mean:.4}")
         score = 1-current_loss_mean
