@@ -56,17 +56,14 @@ if __name__ == "__main__":
         v_df = df[df.fold==args.fold]
         v_df = v_df[v_df.frame<100]
         v_df = v_df[v_df.frame>20]
-        train_dataset = DatasetRetriever2D(df=df,image_root=data_config.train_dir,
+        train_dataset = DatasetRetriever2D(df=t_df,image_root=data_config.train_dir,
                                            add_channel=False,image_size=data_config.img_size_crop,
                                       transforms =get_training_augmentation() )#,mode='train')
 
-        val_dataset = DatasetRetriever2D(df=df,image_root=data_config.train_dir,
+        val_dataset = DatasetRetriever2D(df=v_df,image_root=data_config.train_dir,
                                            add_channel=False,image_size=data_config.img_size_crop,
                                       transforms =get_training_augmentation() )#,mode='train')
 
-        val_dataset = DatasetRetriever2D(df=v_df,image_root=data_config.jpeg_dir,
-                                    transforms=get_validation_augmentation(),
-                                    add_channel=False)
         train = DataLoader(train_dataset, batch_size=model_config.batch_size, shuffle=True, num_workers=model_config.WORKERS, pin_memory=True)
         val = DataLoader(val_dataset, batch_size=model_config.batch_size*1, shuffle=False, num_workers=model_config.WORKERS, pin_memory=True)
         model = EfficientNet.from_pretrained("efficientnet-b5",num_classes=model_config.classes).cuda()
