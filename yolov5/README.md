@@ -1,5 +1,5 @@
 
-# step 1 -
+# step 1 - make yolo data
 ## change param:
 ```
 PATH_DF = '/kaggle/input/nfl-impact-detection/train_labels.csv'
@@ -23,7 +23,7 @@ python3 make_yolo_data.py
 ```
 The images in yolo format save in: convertor/fold0/images/
 
-# train
+# step 2 - train
 ```
 sh weights/download_weights.sh
 pip install -U seaborn
