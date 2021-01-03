@@ -1,12 +1,12 @@
 
 # step 1 -
 ## change param:
-
+'''
 PATH_DF = '/kaggle/input/nfl-impact-detection/train_labels.csv'
 ALL_DATA = -1 #change to 0 if you want to train only images with impact
 video_dir = '/kaggle/input/nfl-impact-detection/train'
 out_dir = 'train_images'
-
+'''
 ## change k-fold stratgy:
 np.random.seed(0)
 video_names = np.random.permutation(video_labels.video.unique())
