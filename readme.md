@@ -46,6 +46,6 @@ python3 train.py --img 1280 --batch 16 --epochs 10 --data data/nfl.yaml --cfg mo
 ```
 # Submit
 ```
-https://github.com/OrKatz7/NFL/blob/main/yolo-with-player-assignment-pp.ipynb
+run_all - yolo-with-player-assignment-pp.ipynb
 On kaggle - https://www.kaggle.com/ks2019/yolo-with-player-assignment-pp
 ```
