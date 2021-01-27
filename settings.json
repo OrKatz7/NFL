@@ -1,2 +1,0 @@
-{"image_root": "train_images",
- "train_csv_path":"Data/nfl_lstm_meta.csv"}
