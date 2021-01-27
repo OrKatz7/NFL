@@ -42,4 +42,8 @@ go to - data/nfl.yaml change nc to number of classes, class name and image loc
 %cd yolov5
 python3 train.py --img 1280 --batch 16 --epochs 10 --data data/nfl.yaml --cfg models/yolov5x.yaml --name yolov5x_fold0 --weights yolov5x.pt --device 0,1,2,3
 ```
-
+# Submit
+```
+https://github.com/OrKatz7/NFL/blob/main/yolo-with-player-assignment-pp.ipynb
+On kaggle - https://www.kaggle.com/ks2019/yolo-with-player-assignment-pp
+```
