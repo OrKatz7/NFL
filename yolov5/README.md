@@ -30,6 +30,7 @@ pip install -U seaborn
 go to - models/yolov5x.yaml change nc to number of classes
 go to - data/nfl.yaml change nc to number of classes, class name and image loc
 ```
+
 ## run
 ```
 python3 train.py --img 1280 --batch 16 --epochs 10 --data data/nfl.yaml --cfg models/yolov5x.yaml --name yolov5x_fold0 --weights yolov5x.pt --device 0,1,2,3
