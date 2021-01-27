@@ -1,5 +1,5 @@
-# Pulmonary Embolism Detection
-This repository developed by [Or Katz](https://www.linkedin.com/in/or-katz-9ba885114/) for the 17th place solution to the kaggle - NFL
+# NFL 1st and Future - Impact Detection
+This repository developed by [Or Katz](https://www.linkedin.com/in/or-katz-9ba885114/) for the 17th place solution to the kaggle - NFL 1st and Future - Impact Detection
 
 # step 1 - make yolo data
 ## change param:
