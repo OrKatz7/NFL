@@ -1,5 +1,5 @@
 # NFL 1st and Future - Impact Detection
-This repository developed by [Or Katz](https://www.linkedin.com/in/or-katz-9ba885114/),[Usha Rengaraju](https://medium.com/@usharengaraju),[Shlomo Kashani](https://www.linkedin.com/in/quantscientist/),[Kumar Shubham](https://www.linkedin.com/in/kumar-shubham-iitd/) and [PRATEEK KUMAR AGNIHOTRI
+This repository developed by [Or Katz](https://www.linkedin.com/in/or-katz-9ba885114/), [Usha Rengaraju](https://medium.com/@usharengaraju), [Shlomo Kashani](https://www.linkedin.com/in/quantscientist/), [Kumar Shubham](https://www.linkedin.com/in/kumar-shubham-iitd/) and [PRATEEK KUMAR AGNIHOTRI
 ](https://www.linkedin.com/in/prateek-kumar-agnihotri-18b498157/)  for the 17th place solution to the kaggle - NFL 1st and Future - Impact Detection
 
 # step 1 - make yolo data
