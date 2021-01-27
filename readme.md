@@ -42,5 +42,6 @@ On kaggle - https://www.kaggle.com/ks2019/yolo-with-player-assignment-pp
 ```
 https://github.com/ultralytics/yolov5
 ```
+
 # LICENSE
 YoloV5 LICENSE - GNU General Public License v3.0 - https://github.com/ultralytics/yolov5/blob/master/LICENSE
