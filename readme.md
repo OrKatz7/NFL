@@ -13,17 +13,6 @@ ALL_DATA = -1 #change to 0 if you want to train only images with impact
 video_dir = '/data/nfl-impact-detection/train'
 out_dir = 'train_images'
 ```
-## change k-fold stratgy:
-```
-%cd yolov5/train.py
-np.random.seed(0)
-video_names = np.random.permutation(video_labels.video.unique())
-valid_video_len = int(len(video_names)*0.2)
-video_valid = video_names[:valid_video_len]
-video_train = video_names[valid_video_len:]
-images_valid = video_labels[ video_labels.video.isin(video_valid)].image_name.unique()
-images_train = video_labels[~video_labels.video.isin(video_valid)].image_name.unique()
-```
 ## Run:
 ```
 %cd yolov5
