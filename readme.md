@@ -7,6 +7,7 @@ This repository developed by [Or Katz](https://www.linkedin.com/in/or-katz-9ba88
 # step 1 - make yolo data
 ## change param:
 ```
+%cd yolov5
 PATH_DF = '/data/nfl-impact-detection/train_labels.csv'
 ALL_DATA = -1 #change to 0 if you want to train only images with impact
 video_dir = '/data/nfl-impact-detection/train'
@@ -14,6 +15,7 @@ out_dir = 'train_images'
 ```
 ## change k-fold stratgy:
 ```
+%cd yolov5/train.py
 np.random.seed(0)
 video_names = np.random.permutation(video_labels.video.unique())
 valid_video_len = int(len(video_names)*0.2)
